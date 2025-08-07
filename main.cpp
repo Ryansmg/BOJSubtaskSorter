@@ -54,8 +54,15 @@ vector<int> set_subtask(cifstream&& in, int num) {
 #undef cin
 
 int main() {
-    filesystem::remove_all("./result");
-    filesystem::create_directories("./result");
+    if(filesystem::exists("./result")) {
+        for(const auto& entry : filesystem::directory_iterator("./result")) {
+            if(!remove(entry)) {
+                cerr << "file remove failed. check processes using ./result directory\n";
+                return 1;
+            }
+        }
+    }
+    else filesystem::create_directories("./result");
     set<string> processed;
     for(const auto& entry : filesystem::directory_iterator("./tests")) {
         string num = entry.path().stem().string();
